@@ -1,38 +1,39 @@
 package data_ingestion;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import okhttp3.*;
+
+import java.io.IOException;
 
 public class BitqueryClient {
-
+    private String apiKey;
     private String accessToken;
 
-    public BitqueryClient(String accessToken) {
+    public BitqueryClient(String apiKey, String accessToken) {
+        this.apiKey = apiKey;
         this.accessToken = accessToken;
     }
 
-    public String fetchCryptoData() throws Exception {
-        String url = "https://graphql.bitquery.io/";
-        String query = "{ bitcoin { trades(options: {limit: 10}) { id price timestamp amount exchange { name } } } }";
+    public String fetchCryptoData(String query) throws IOException {
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
 
-        // Create HTTP client
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpPost post = new HttpPost(url);
-            post.setHeader("Content-Type", "application/json");
-            post.setHeader("Authorization", "Bearer " + accessToken);
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, query);
+        Request request = new Request.Builder()
+                .url("https://streaming.bitquery.io/graphql")
+                .method("POST", body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("X-API-KEY", apiKey)
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .build();
 
-            // Set the request body
-            StringEntity entity = new StringEntity("{\"query\": \"" + query + "\"}");
-            post.setEntity(entity);
+        Response response = client.newCall(request).execute();
 
-            // Execute request and process response
-            try (CloseableHttpResponse response = client.execute(post)) {
-                return EntityUtils.toString(response.getEntity());
-            }
+        if (!response.isSuccessful()) {
+            throw new IOException("Unexpected code " + response);
         }
+
+        // Parse the response body as JSON if needed
+        return response.body().string();
     }
+
 }
