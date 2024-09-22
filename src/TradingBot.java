@@ -1,4 +1,5 @@
 import data_ingestion.BitqueryClient;
+import data_ingestion.QueryManager;
 
 import java.io.IOException;
 
@@ -8,9 +9,10 @@ public class TradingBot {
         // Replace with your actual API key and access token
         String apiKey = System.getenv("BITQUERY_API_KEY");
         String accessToken = System.getenv("BITQUERY_ACCESS_TOKEN");
-
         BitqueryClient client = new BitqueryClient(apiKey, accessToken);
-        String query = "{ \"query\": \"{ EVM(network: eth, dataset: archive) { Blocks(limit: { count: 10 }) { Block { Number Time } } } }\" }";
+
+        QueryManager queryManager = new QueryManager();
+        String query = queryManager.getQuery("RecentBSCBlocksQuery");
 
         String responseData = client.fetchCryptoData(query);
 
