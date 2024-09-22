@@ -1,5 +1,9 @@
 package data_ingestion;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,62 +12,89 @@ import java.net.URL;
 
 public class BitcoinPriceFetcher {
 
+    // Create logger instance
+    private static final Logger logger = LoggerFactory.getLogger(BitcoinPriceFetcher.class);
+
     /**
-     * Prints the current Bitcoin price.
+     * Makes an HTTP GET request to the CoinDesk API to retrieve the current Bitcoin price and associated time.
      *
-     * This method makes an HTTP GET request to the CoinDesk API to retrieve the current Bitcoin price
-     * and prints it to the console.
-     *
-     * @throws IOException if there is an error making the HTTP request or reading the response.
+     * @return A PriceTime object containing the price and the time.
+     * @throws IOException If there is an error making the request or reading the response.
      */
-    public static void printBitcoinPrice() throws IOException {
-        // Create a URL object with the CoinDesk API endpoint
+    public static PriceTime getCurrentPriceAndTime() throws IOException {
+        logger.info("Starting request to fetch Bitcoin price and time.");
         URL url = new URL("https://api.coindesk.com/v1/bpi/currentprice/BTC.json");
-
-        // Open a connection to the URL
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        // Set the request method to GET
         connection.setRequestMethod("GET");
 
         // Get the response code
         int responseCode = connection.getResponseCode();
+        logger.info("Received response code: {}", responseCode);
 
-        // Check if the request was successful (response code 200)
+        // If the request succeeded
         if (responseCode == HttpURLConnection.HTTP_OK) {
-            // Create a BufferedReader to read the response
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-            // Read the response line by line
-            String line;
             StringBuilder response = new StringBuilder();
+            String line;
+
+            // Read through the response
             while ((line = reader.readLine()) != null) {
                 response.append(line);
             }
-
-            // Close the reader
             reader.close();
+            logger.info("Response received: {}", response.toString());
 
-            // Parse the JSON response to get the Bitcoin price
-            String json = response.toString();
-            String price = json.substring(json.indexOf("rate") + 7, json.indexOf("rate") + 14);
+            // Parse JSON
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(response.toString());
 
-            // Print the Bitcoin price
-            System.out.println("The current Bitcoin price is: " + price);
+            // Extract price and time
+            String price = rootNode.path("bpi").path("USD").path("rate").asText();
+            String time = rootNode.path("time").path("updated").asText();
+
+            logger.info("Fetched price: {} and time: {}", price, time);
+
+            // Return the price and time
+            return new PriceTime(price, time);
         } else {
-            // Print an error message if the request was not successful
-            System.out.println("Failed to get Bitcoin price. Response code: " + responseCode);
+            String errorMessage = "Failed to get Bitcoin price. Response code: " + responseCode;
+            logger.error(errorMessage);
+            throw new IOException(errorMessage);
+        }
+    }
+
+    /**
+     * Stores price and time data
+     */
+    public static class PriceTime {
+        private final String price;
+        private final String time;
+
+        public PriceTime(String price, String time) {
+            this.price = price;
+            this.time = time;
         }
 
-        // Disconnect the connection
-        connection.disconnect();
+        public String getPrice() {
+            return price;
+        }
+
+        public String getTime() {
+            return time;
+        }
+
+        @Override
+        public String toString() {
+            return "Price: " + price + ", Time: " + time;
+        }
     }
 
     public static void main(String[] args) {
         try {
-            printBitcoinPrice();
+            PriceTime priceTime = getCurrentPriceAndTime();
+            System.out.println(priceTime);  // Uses the overridden toString method in PriceTime class
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error occurred while fetching Bitcoin price: {}", e.getMessage());
         }
     }
 }
