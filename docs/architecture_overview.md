@@ -2,7 +2,7 @@
 
 ## Introduction
 
-TradingBot is an advanced trading bot developed in **Java**. It automates trading decisions using adaptive strategies that account for market volatility, trading fees, and investment size. The architecture is designed to be modular and scalable, ensuring efficient data processing, decision-making, and execution of trades. The system integrates real-time market data with sophisticated machine learning models to enhance trading performance and manage risks effectively. TradingBot supports both **stocks** and **cryptocurrencies** to provide a broad range of trading opportunities.
+Main is an advanced trading bot developed in **Java**. It automates trading decisions using adaptive strategies that account for market volatility, trading fees, and investment size. The architecture is designed to be modular and scalable, ensuring efficient data processing, decision-making, and execution of trades. The system integrates real-time market data with sophisticated machine learning models to enhance trading performance and manage risks effectively. Main supports both **stocks** and **cryptocurrencies** to provide a broad range of trading opportunities.
 
 ## Architecture Components
 
@@ -135,4 +135,4 @@ TradingBot is an advanced trading bot developed in **Java**. It automates tradin
 
 ## Conclusion
 
-The architecture of TradingBot is designed for flexibility and efficiency, integrating various components to automate trading decisions and optimize performance. Each layer of the system contributes to a comprehensive and adaptive trading strategy, ensuring robust handling of market data and effective risk management. By supporting both stock and cryptocurrency trading, TradingBot provides diverse opportunities for automated investment strategies.
+The architecture of Main is designed for flexibility and efficiency, integrating various components to automate trading decisions and optimize performance. Each layer of the system contributes to a comprehensive and adaptive trading strategy, ensuring robust handling of market data and effective risk management. By supporting both stock and cryptocurrency trading, Main provides diverse opportunities for automated investment strategies.

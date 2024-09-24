@@ -1,4 +1,4 @@
-TradingBot/
+Main/
 │
 ├── src/                                # Source code for the bot
 │   ├── data_ingestion/                 # Data Ingestion Layer

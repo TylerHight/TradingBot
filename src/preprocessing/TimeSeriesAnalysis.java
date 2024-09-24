@@ -9,18 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TimeSeriesAnalysis {
-    private List<Double> prices;
+    private List<Double> values;
     private List<Long> timestamps;
 
     // The prices and their associated timestamps
     public TimeSeriesAnalysis() {
-        prices = new ArrayList<>();
+        values = new ArrayList<>();
         timestamps = new ArrayList<>();
     }
 
     // Adds a new price and timestamp
     public void addPrice(double price, long timestamp) {
-        prices.add(price);
+        values.add(price);
         timestamps.add(timestamp);
     }
 
@@ -31,14 +31,14 @@ public class TimeSeriesAnalysis {
      */
     public List<Double> calculateMovingAverage(int period) {
         List<Double> movingAverages = new ArrayList<>();
-        if (prices.size() < period) {
+        if (values.size() < period) {
             return movingAverages; // Not enough data to calculate the moving average
         }
         // Go through the prices from start to end while calculating the moving average
-        for (int i = 0; i <= prices.size() - period; i++) {
+        for (int i = 0; i <= values.size() - period; i++) {
             double sum = 0.0;
             for (int j = 0; j < period; j++) {
-                sum += prices.get(i + j);
+                sum += values.get(i + j);
             }
             movingAverages.add(sum / period);
         }
@@ -52,7 +52,7 @@ public class TimeSeriesAnalysis {
      */
     public List<Double> calculateEMA(int period) {
         List<Double> emaValues = new ArrayList<>();
-        if (prices.size() < period) {
+        if (values.size() < period) {
             return emaValues; // Not enough data to calculate EMA
         }
 
@@ -61,14 +61,14 @@ public class TimeSeriesAnalysis {
 
         // Calculate the first EMA (SMA for the first period)
         for (int i = 0; i < period; i++) {
-            sum += prices.get(i);
+            sum += values.get(i);
         }
         double ema = sum / period;
         emaValues.add(ema);
 
         // Continue calculating EMA for the values in prices
-        for (int i = period; i < prices.size(); i++) {
-            ema = ((prices.get(i) - ema) * multiplier) + ema;
+        for (int i = period; i < values.size(); i++) {
+            ema = ((values.get(i) - ema) * multiplier) + ema;
             emaValues.add(ema);
         }
         return emaValues;
@@ -81,7 +81,7 @@ public class TimeSeriesAnalysis {
      * @return A list of Fourier Transform magnitudes.
      */
     public List<Double[]> calculateFourierTransform() {
-        int n = prices.size();
+        int n = values.size();
         if (n == 0) {
             return new ArrayList<>(); // Return empty list if no prices are available
         }
@@ -95,7 +95,7 @@ public class TimeSeriesAnalysis {
         // Create a padded array for FFT (zero-padding)
         double[] paddedPrices = new double[nextPowerOfTwo];
         for (int i = 0; i < n; i++) {
-            paddedPrices[i] = prices.get(i);
+            paddedPrices[i] = values.get(i);
         }
 
         // Check if we have enough timestamps to calculate the sampling interval
@@ -125,8 +125,8 @@ public class TimeSeriesAnalysis {
         return frequencyMagnitudes; // Return list of frequency-magnitude pairs
     }
 
-    public List<Double> getPrices() {
-        return prices;
+    public List<Double> getValues() {
+        return values;
     }
 
     public List<Long> getTimestamps() {
