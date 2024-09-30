@@ -9,8 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+
 
 public class BitcoinPriceFetcher {
 
@@ -86,22 +85,6 @@ public class BitcoinPriceFetcher {
         }
         logger.info("Fetched minute-level prices for symbol: {} at interval: {}.", symbol, interval);
         return minutePriceTime;
-    }
-
-    // Class to store minute-level price and time data
-    public static class MinutePriceTime {
-        private final Map<Long, Double> prices = new HashMap<>();
-
-        public void addPrice(long openTime, double openPrice) {
-            prices.put(openTime, openPrice);
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            prices.forEach((time, price) -> sb.append("Time: ").append(time).append(", Price: ").append(price).append("\n"));
-            return sb.toString();
-        }
     }
 
     public static void main(String[] args) {

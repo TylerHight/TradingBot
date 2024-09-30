@@ -32,7 +32,7 @@ public class BitcoinPriceFetcherTest {
     @Test
     public void testMinutePriceTimeWithMockData() {
         try {
-            BitcoinPriceFetcher.MinutePriceTime simulatedMinutePrices = new BitcoinPriceFetcher.MinutePriceTime();
+            MinutePriceTime simulatedMinutePrices = new MinutePriceTime();
             // Mock data
             simulatedMinutePrices.addPrice(1695634800000L, 35250.00);
             simulatedMinutePrices.addPrice(1695634860000L, 35260.00);

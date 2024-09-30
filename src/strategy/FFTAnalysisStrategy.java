@@ -1,6 +1,7 @@
 package strategy;
 
 import data_ingestion.BitcoinPriceFetcher;
+import data_ingestion.MinutePriceTime;
 import preprocessing.TimeSeriesAnalysis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +61,7 @@ public class FFTAnalysisStrategy {
     public static void main(String[] args) {
         FFTAnalysisStrategy strategy = new FFTAnalysisStrategy(); // Create an instance of the strategy
         try {
-            BitcoinPriceFetcher.MinutePriceTime minutePrices = getMinuteLevelPrices("BTCUSDT", "1m", System.getenv("BINANCE_API_KEY"));
+            MinutePriceTime minutePrices = getMinuteLevelPrices("BTCUSDT", "1m", System.getenv("BINANCE_API_KEY"));
             System.out.println(minutePrices);
         } catch (IOException e) {
             logger.error("Error occurred while fetching minute prices: {}", e.getMessage(), e);

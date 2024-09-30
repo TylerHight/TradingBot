@@ -38,7 +38,7 @@ public class FourierPlotterTest {
         FourierPlotter.plotFourierTransform(result, "Single Sine Wave at 1 Hz");
 
         // Optionally keep the plot window open to inspect the graph
-        // Thread.sleep(10000);
+        Thread.sleep(10000);
     }
 
     @Test
