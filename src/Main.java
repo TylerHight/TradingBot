@@ -1,28 +1,12 @@
 public class Main {
-
     public static void main(String[] args) {
         Solution solution = new Solution();
-        // Example input data
-        Solution.SentimentPriceData[] priceData2 = {
-                new Solution.SentimentPriceData("2024-09-24 14:56:00", 64208.99, 0.1),
-                new Solution.SentimentPriceData("2024-09-24 14:57:00", 64189.27, 0.15),
-                new Solution.SentimentPriceData("2024-09-24 14:58:00", 64200.0, 0.2),
-                new Solution.SentimentPriceData("2024-09-24 14:59:00", 64291.0, 0.1),
-                new Solution.SentimentPriceData("2024-09-24 15:00:00", 64322.53, -0.1),
-                new Solution.SentimentPriceData("2024-09-24 15:01:00", 64322.61, -0.15),
-                new Solution.SentimentPriceData("2024-09-24 15:02:00", 64148.27, -0.2),
-                new Solution.SentimentPriceData("2024-09-24 15:03:00", 64247.91, 0.05),
-                new Solution.SentimentPriceData("2024-09-24 15:04:00", 64358.97, 0.2),
-                new Solution.SentimentPriceData("2024-09-24 15:05:00", 64363.48, 0.25),
-                new Solution.SentimentPriceData("2024-09-24 15:06:00", 64417.97, -0.05),
-        };
-        Solution.Output result2 = solution.runSAMA(priceData2, 3, 5);
-        // Test output for the 11th data point
-        double expectedSma2 = 64380.14;
-        double expectedSama2 = 64307.32;
-        double expectedDifference2 = -72.82;
-        assert result2.smaValues[10] == expectedSma2 &&
-                result2.samaValues[10] == expectedSama2 &&
-                result2.differences[10] == expectedDifference2;
+        Solution.TradeDecisionManager service = solution.new TradeDecisionManager(0.7);
+
+        Solution.TradingSignal signal = solution.new TradingSignal("AAPL", "BUY", 150.0, 1000000, "BULLISH", 0.8);
+        Solution.TradeDecision decision = service.evaluateTrade(signal);
+        assert decision != null : "Decision should not be null";
+
+        System.out.println("TestEvaluateTradeDecisionNotNull_ShouldTrade passed!");
     }
 }

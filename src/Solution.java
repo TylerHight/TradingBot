@@ -1,103 +1,91 @@
 public class Solution {
 
-    public static class SentimentPriceData {
+    // Inner TradeDecisionManager class inside Solution
+    public class TradeDecisionManager {
+        private final double confidenceThreshold;
 
-        private String time;
-        private double price;
-        private double sentiment;
-
-        public SentimentPriceData(String time, double price, double sentiment) {
-            this.time = time;
-            this.price = price;
-            this.sentiment = sentiment;
+        public TradeDecisionManager(double confidenceThreshold) {
+            this.confidenceThreshold = confidenceThreshold;
         }
 
-        public String getTime() {
-            return time;
-        }
+        public TradeDecision evaluateTrade(TradingSignal signal) {
+            try {
+                double confidence = calculateConfidence(signal);
+                boolean shouldTrade = confidence >= confidenceThreshold;
 
-        public double getPrice() {
-            return price;
-        }
-
-        public double getSentiment() {
-            return sentiment;
-        }
-    }
-
-    public static class Output {
-
-        public double[] smaValues;
-        public double[] samaValues;
-        public double[] differences;
-
-        public Output(double[] smaValues, double[] samaValues, double[] differences) {
-            this.smaValues = smaValues;
-            this.samaValues = samaValues;
-            this.differences = differences;
-        }
-
-        public double[] getSmaValues() {
-            return smaValues;
-        }
-
-        public double[] getSamaValues() {
-            return samaValues;
-        }
-
-        public double[] getDifferences() {
-            return differences;
-        }
-    }
-
-    public Output runSAMA(SentimentPriceData[] data, int shortWindow, int defaultLongWindow) {
-        if (shortWindow <= 0 || defaultLongWindow <= 0) {
-            throw new IllegalArgumentException("Input window lengths must be positive integers.");
-        }
-
-        if (shortWindow >= defaultLongWindow) {
-            throw new IllegalArgumentException("The input short window length must be less than the long window.");
-        }
-
-        int n = data.length;
-        double[] smaValues = new double[n];
-        double[] samaValues = new double[n];
-        double[] differences = new double[n];
-
-        for (int i = 0; i < n; i++) {
-            // Simple Moving Average (SMA)
-            smaValues[i] = calculateSMA(data, shortWindow, i);
-
-            // Calculate the adjusted long window using sentiment
-            double sentiment = Math.abs(data[i].getSentiment());
-            int longWindow = (int) Math.round(defaultLongWindow - ((defaultLongWindow - shortWindow) * sentiment));
-
-            // Sentiment-Adjusted Moving Average (SAMA)
-            samaValues[i] = calculateSMA(data, longWindow, i);
-
-            // Calculate the difference
-            if (smaValues[i] == 0 || samaValues[i] == 0) {
-                differences[i] = 0;
-            } else {
-                differences[i] = smaValues[i] - samaValues[i];
+                return new TradeDecision(shouldTrade, confidence, signal.getAsset(), signal.getAction());
+            } catch (Exception e) {
+                System.err.println("Error evaluating trade: " + e.getMessage());
+                return new TradeDecision(false, 0, signal.getAsset(), signal.getAction());
             }
-
-            // Round to four decimal places
-            smaValues[i] = Math.round(smaValues[i] * 10000.0) / 10000.0;
-            samaValues[i] = Math.round(samaValues[i] * 10000.0) / 10000.0;
-            differences[i] = Math.round(differences[i] * 10000.0) / 10000.0;
         }
 
-        return new Output(smaValues, samaValues, differences);
+        private double calculateConfidence(TradingSignal signal) {
+            double volumeWeight = 0.2;
+            double trendWeight = 0.3;
+            double indicatorWeight = 0.5;
+
+            double volumeSignal = normalizeVolume(signal.getVolume());
+            double trendSignal = "BULLISH".equalsIgnoreCase(signal.getMarketTrend()) ? 1.0 : 0.0;
+            double indicatorSignal = normalizeIndicator(signal.getTechnicalIndicator());
+
+            return (volumeSignal * volumeWeight) + (trendSignal * trendWeight) + (indicatorSignal * indicatorWeight);
+        }
+
+        private double normalizeVolume(double volume) {
+            return Math.min(volume / 1000000.0, 1.0);
+        }
+
+        private double normalizeIndicator(double indicator) {
+            return Math.max(0, Math.min(indicator, 1));
+        }
     }
 
-    // Helper method to calculate simple moving average (SMA)
-    private double calculateSMA(SentimentPriceData[] data, int window, int index) {
-        if (index < window - 1) return 0;
-        double sum = 0;
-        for (int i = index - window + 1; i <= index; i++) {
-            sum += data[i].getPrice();
+    // Inner TradingSignal class
+    public class TradingSignal {
+        private String asset;
+        private String action;
+        private double price;
+        private double volume;
+        private String marketTrend;
+        private double technicalIndicator;
+
+        public TradingSignal(String asset, String action, double price, double volume, String marketTrend, double technicalIndicator) {
+            this.asset = asset;
+            this.action = action;
+            this.price = price;
+            this.volume = volume;
+            this.marketTrend = marketTrend;
+            this.technicalIndicator = technicalIndicator;
         }
-        return sum / window;
+
+        // Getters
+        public String getAsset() { return asset; }
+        public String getAction() { return action; }
+        public double getPrice() { return price; }
+        public double getVolume() { return volume; }
+        public String getMarketTrend() { return marketTrend; }
+        public double getTechnicalIndicator() { return technicalIndicator; }
+    }
+
+    // Inner TradeDecision class
+    public class TradeDecision {
+        private boolean shouldTrade;
+        private double confidence;
+        private String asset;
+        private String action;
+
+        public TradeDecision(boolean shouldTrade, double confidence, String asset, String action) {
+            this.shouldTrade = shouldTrade;
+            this.confidence = confidence;
+            this.asset = asset;
+            this.action = action;
+        }
+
+        // Getters
+        public boolean isShouldTrade() { return shouldTrade; }
+        public double getConfidence() { return confidence; }
+        public String getAsset() { return asset; }
+        public String getAction() { return action; }
     }
 }
