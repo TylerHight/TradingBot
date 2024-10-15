@@ -26,7 +26,7 @@ import java.util.HashMap;
  * </pre>
  * </p>
  *
- * @see FourierTransform
+ * @see FourierTransformer
  */
 public class FourierAnalysis {
     private static final double MAGNITUDE_THRESHOLD = 0.1;

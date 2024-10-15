@@ -6,14 +6,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 class TimeSeriesAnalysisTest {
 
     private TimeSeriesAnalysis tsa;
+    private FourierTransformer fourierTransformer;
 
     @BeforeEach
     void setUp() {
         tsa = new TimeSeriesAnalysis(3, 3);
+        fourierTransformer = new FourierTransformer();
     }
 
     @Test
@@ -78,14 +82,29 @@ class TimeSeriesAnalysisTest {
 
     @Test
     void testFourierTransform() {
-        // This test depends on the implementation of FourierTransform class
-        // You might need to mock this class or provide a simple implementation for testing
-        tsa.addPrice(10, 1000);
-        tsa.addPrice(20, 2000);
-        tsa.addPrice(30, 3000);
+        List<Double> values = Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0);
+        List<Long> timestamps = IntStream.range(0, values.size())
+                .mapToObj(i -> (long) i * 1000)
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < values.size(); i++) {
+            tsa.addPrice(values.get(i), timestamps.get(i));
+        }
 
         List<Double[]> result = tsa.calculateFourierTransform();
+
         assertNotNull(result);
-        // Add more specific assertions based on expected Fourier Transform results
+        assertEquals(4, result.size()); // Half of the input size due to symmetry
+
+        // Check if frequencies are correctly calculated
+        assertEquals(0.0, result.get(0)[0], 1e-6);
+        assertEquals(0.125, result.get(1)[0], 1e-6);
+        assertEquals(0.25, result.get(2)[0], 1e-6);
+        assertEquals(0.375, result.get(3)[0], 1e-6);
+
+        // Check if magnitudes are non-negative
+        for (Double[] freqMag : result) {
+            assertTrue(freqMag[1] >= 0);
+        }
     }
 }

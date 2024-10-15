@@ -1,3 +1,4 @@
+/*
 package preprocessing;
 
 import monitoring.MultiTimeSeriesPlotter;
@@ -8,7 +9,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-/*NOT WORKING CORRECTLY - source: https://gist.github.com/tartakynov/83f3cd8f44208a1856ce*/
+NOT WORKING CORRECTLY - source: https://gist.github.com/tartakynov/83f3cd8f44208a1856ce
+
 public class FourierExtrapolation {
 
     public static List<Double> extrapolateUsingSignificantHarmonics(List<Double> prices, List<Long> timestamps, int numPredictions) {
@@ -16,7 +18,7 @@ public class FourierExtrapolation {
         List<Double> extrapolated = new ArrayList<>();
 
         // Create FourierTransform object to calculate FFT
-        FourierTransform transformer = new FourierTransform();
+        FourierTransformer transformer = new FourierTransformer();
 
         // Step 1: Calculate FFT using the FourierTransform class
         List<Double[]> frequencyMagnitudes = transformer.calculateFourierTransform(prices, timestamps);
@@ -78,7 +80,7 @@ public class FourierExtrapolation {
         }
 
         // Create FourierTransform object and calculate the Fourier Transform
-        FourierTransform transformer = new FourierTransform();
+        FourierTransformer transformer = new FourierTransformer();
         List<Double[]> frequencyMagnitudes = transformer.calculateFourierTransform(prices, timestamps);
 
         // Define the number of predictions to make
@@ -108,3 +110,4 @@ public class FourierExtrapolation {
     }
 
 }
+*/

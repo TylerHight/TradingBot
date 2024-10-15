@@ -1,12 +1,17 @@
 package preprocessing;
 
+import org.apache.commons.math3.complex.Complex;
+
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Stores data on and performs analyses on a particular set of timeseries data.
+ */
 public class TimeSeriesAnalysis {
     private List<Double> values;
     private List<Long> timestamps;
-    private FourierTransform fourierTransform;
+    private FourierTransformer fourierTransformer;
     private Double lastSMA;
     private Double lastEMA;
     private int smaPeriod;
@@ -23,7 +28,7 @@ public class TimeSeriesAnalysis {
         }
         this.values = new ArrayList<>(initialValues);
         this.timestamps = new ArrayList<>(initialTimestamps);
-        this.fourierTransform = new FourierTransform();
+        this.fourierTransformer = new FourierTransformer();
         this.smaPeriod = smaPeriod;
         this.emaPeriod = emaPeriod;
         this.lastSMA = null;
@@ -103,7 +108,9 @@ public class TimeSeriesAnalysis {
     }
 
     public List<Double[]> calculateFourierTransform() {
-        return fourierTransform.calculateFourierTransform(values, timestamps);
+        Complex[] fftResult = fourierTransformer.calculateFourierTransform(values);
+        double samplingFrequency = fourierTransformer.calculateSamplingFrequency(timestamps);
+        return fourierTransformer.getFrequencyMagnitudePairs(fftResult, samplingFrequency);
     }
 
     public List<Double> getValues() {

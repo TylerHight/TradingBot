@@ -1,12 +1,26 @@
-public class Main {
+import org.apache.commons.math3.complex.Complex;
+
+import java.util.ArrayList;
+import java.util.List;
+
+class Main {
     public static void main(String[] args) {
-        Solution solution = new Solution();
-        Solution.TradeDecisionManager service = solution.new TradeDecisionManager(0.7);
-
-        Solution.TradingSignal signal = solution.new TradingSignal("AAPL", "BUY", 150.0, 1000000, "BULLISH", 0.8);
-        Solution.TradeDecision decision = service.evaluateTrade(signal);
-        assert decision != null : "Decision should not be null";
-
-        System.out.println("TestEvaluateTradeDecisionNotNull_ShouldTrade passed!");
+        FourierTransformer transformer = new FourierTransformer();
+        List<Double> values = new ArrayList<>();
+        int numSamples = 1000;
+        double frequency = 1.0; // 1 Hz
+        double amplitude = 2.0;
+        // Generate 1 Hz sine wave
+        for (int i = 0; i < numSamples; i++) {
+            double time = i / (double) numSamples;
+            double value = amplitude * Math.sin(2 * Math.PI * frequency * time);
+            values.add(value);
+        }
+        Complex[] fftResult = transformer.calculateFourierTransform(values);
+        int expectedPeakIndex = 1;
+        double expectedImaginary = -1008.0;
+        Complex resultUnrounded = fftResult[expectedPeakIndex];
+        long resultRoundedComplex = Math.round(resultUnrounded.getImaginary());
+        assert resultRoundedComplex == expectedImaginary;
     }
 }

@@ -16,7 +16,7 @@ public class FourierPlotterTest {
 
     @BeforeEach
     public void setup() {
-        timeSeries = new TimeSeriesAnalysis();
+        timeSeries = new TimeSeriesAnalysis(3, 5);
     }
 
     @Test
